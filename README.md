@@ -192,9 +192,6 @@ piazza_project/
 3. **API Integration**: Update API calls in the frontend
 4. **Testing**: Test both services independently
 
-## 📄 License
-
-This project is licensed under the MIT License.
 
 
 
