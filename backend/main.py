@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any
 import fitz  # PyMuPDF
+from normalize import normalize_tables
 import requests
 import json
 import tempfile
@@ -78,7 +79,7 @@ def send_text_to_olmocr(text: str) -> dict:
             {
                 "role": "system",
                 "content": (
-                    "- entities: names, dates, addresses\n"
+                    "- entities: Names, Dates, Addresses\n"
                     "- tables: headers and rows\n\n"
                     "Respond in this JSON format:\n"
                     "{\n"
@@ -248,6 +249,7 @@ async def process_pdf(file: UploadFile = File(...)):
             
             logger.info("Parsing OCR response content")
             parsed_content = json.loads(content)
+            parsed_content = normalize_tables(parsed_content)
             
             # Validate and structure the response
             ocr_result = OCRResponse(
@@ -337,7 +339,7 @@ async def process_text(text: str):
                 raise ValueError("No content in OCR response")
                 
             parsed_content = json.loads(content)
-            
+            parsed_content = normalize_tables(parsed_content)
             return {
                 "success": True,
                 "input_text": text,

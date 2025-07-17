@@ -1,5 +1,9 @@
 # PDF Processing Pipeline
 
+## 🌐 Frontend Demo
+
+![Frontend Demo](frontend_demo.png)
+
 A full-stack application that extracts entities (names, dates, addresses) and tables from PDF documents using OCR processing with the olmocr-7b-0225-preview model. Features a modern React frontend with real-time pipeline visualization and a FastAPI backend for robust PDF processing.
 
 ## 🚀 Features

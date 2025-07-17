@@ -1,60 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { ReactFlow, Controls, Background, Handle, Position, useNodesState, useEdgesState } from 'reactflow';
+import { useNodesState, useEdgesState } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { Upload, FileText, Database, Eye, Download, AlertCircle, CheckCircle, Loader, Play, Server, Wifi, WifiOff } from 'lucide-react';
+import { Upload, FileText, Database, Download, AlertCircle, Loader, Play, Server, Wifi, WifiOff } from 'lucide-react';
 
 // Custom Node Components
-const PDFNode = ({ data }) => (
-  <div className="bg-white border-2 border-blue-500 rounded-lg p-4 shadow-lg min-w-[200px]">
-    <div className="flex items-center gap-2 mb-2">
-      <FileText className="w-5 h-5 text-blue-600" />
-      <span className="font-semibold text-gray-800">PDF Input</span>
-    </div>
-    <div className="text-sm text-gray-600">
-      {data.fileName || 'No file selected'}
-    </div>
-    <Handle type="source" position={Position.Right} className="bg-blue-500" />
-  </div>
-);
-
-const ProcessingNode = ({ data }) => (
-  <div className="bg-white border-2 border-yellow-500 rounded-lg p-4 shadow-lg min-w-[200px]">
-    <div className="flex items-center gap-2 mb-2">
-      <Database className="w-5 h-5 text-yellow-600" />
-      <span className="font-semibold text-gray-800">OCR Processing</span>
-    </div>
-    <div className="text-sm text-gray-600">
-      {data.status === 'processing' && (
-        <div className="flex items-center gap-2">
-          <Loader className="w-4 h-4 animate-spin text-yellow-600" />
-          Processing...
-        </div>
-      )}
-      {data.status === 'completed' && (
-        <div className="flex items-center gap-2">
-          <CheckCircle className="w-4 h-4 text-green-600" />
-          Completed
-        </div>
-      )}
-      {data.status === 'idle' && 'FastAPI + olmocr-7b'}
-    </div>
-    <Handle type="target" position={Position.Left} className="bg-yellow-500" />
-    <Handle type="source" position={Position.Right} className="bg-yellow-500" />
-  </div>
-);
-
-const OutputNode = ({ data }) => (
-  <div className="bg-white border-2 border-green-500 rounded-lg p-4 shadow-lg min-w-[200px]">
-    <div className="flex items-center gap-2 mb-2">
-      <Eye className="w-5 h-5 text-green-600" />
-      <span className="font-semibold text-gray-800">Results</span>
-    </div>
-    <div className="text-sm text-gray-600">
-      {data.hasResults ? 'Entities & Tables' : 'No results yet'}
-    </div>
-    <Handle type="target" position={Position.Left} className="bg-green-500" />
-  </div>
-);
+import PDFNode from './components/PDFNode';
+import ProcessingNode from './components/ProcessingNode';
+import OutputNode from './components/OutputNode';
+import PipelineFlow from './components/PipelineFlow';
 
 const nodeTypes = {
   pdfNode: PDFNode,
@@ -412,20 +365,13 @@ const PDFProcessorApp = () => {
         {/* Pipeline Visualization */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Processing Pipeline</h2>
-          <div className="h-80 border rounded-lg bg-gray-50">
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              nodeTypes={nodeTypes}
-              fitView
-              attributionPosition="bottom-left"
-            >
-              <Background />
-              <Controls />
-            </ReactFlow>
-          </div>
+          <PipelineFlow
+  nodes={nodes}
+  edges={edges}
+  onNodesChange={onNodesChange}
+  onEdgesChange={onEdgesChange}
+  nodeTypes={nodeTypes}
+/>
         </div>
 
         {/* Results Section */}

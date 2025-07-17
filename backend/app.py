@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 import json
+from normalize import normalize_tables
 import tempfile
 import os
 from typing import Dict, Any
