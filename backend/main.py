@@ -32,7 +32,6 @@ class OCRResponse(BaseModel):
 
 class ProcessingResult(BaseModel):
     success: bool
-    extracted_text: str
     ocr_result: OCRResponse
     error: str = None
 
@@ -233,7 +232,6 @@ async def process_pdf(file: UploadFile = File(...)):
             logger.error("Invalid OCR response format")
             return ProcessingResult(
                 success=False,
-                extracted_text=extracted_text,
                 ocr_result=OCRResponse(
                     entities=EntityData(names=[], dates=[], addresses=[]),
                     tables=[]
@@ -269,21 +267,19 @@ async def process_pdf(file: UploadFile = File(...)):
             logger.info("PDF processing completed successfully")
             return ProcessingResult(
                 success=True,
-                extracted_text=extracted_text,
                 ocr_result=ocr_result
             )
             
         except (KeyError, json.JSONDecodeError, ValueError) as e:
-            logger.error(f"Failed to parse OCR response: {str(e)}")
+            logger.error(f"Failed to parse OCR response: {str(e)}; Raw content: {content}")
             # If parsing fails, return raw response
             return ProcessingResult(
                 success=False,
-                extracted_text=extracted_text,
                 ocr_result=OCRResponse(
                     entities=EntityData(names=[], dates=[], addresses=[]),
                     tables=[]
                 ),
-                error=f"Failed to parse OCR response: {str(e)}"
+                error=f"Failed to parse OCR response: {str(e)}; Raw content: {content}"
             )
         
     except HTTPException:
@@ -293,7 +289,6 @@ async def process_pdf(file: UploadFile = File(...)):
         logger.error(f"Unexpected error in process_pdf: {str(e)}")
         return ProcessingResult(
             success=False,
-            extracted_text="",
             ocr_result=OCRResponse(
                 entities=EntityData(names=[], dates=[], addresses=[]),
                 tables=[]
